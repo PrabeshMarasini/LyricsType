@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Lyrics Player</title>
+</head>
+<body>
+    <h1>Play Music with Synced Lyrics</h1>
+
+    {% if not subtitles %}
+        <form action="/get_subtitles" method="post">
+            <input type="text" name="url" placeholder="YouTube URL" required>
+            <button type="submit">Check Subtitles</button>
+        </form>
+    {% else %}
+        <form action="/download" method="post">
+            <input type="hidden" name="url" value="{{ url }}">
+            <label>Choose subtitle:</label>
+            <select name="lang" required>
+                {% for lang in subtitles %}
+                    <option value="{{ lang }}">{{ lang }}</option>
+                {% endfor %}
+            </select>
+            <button type="submit">Download & Play</button>
+        </form>
+    {% endif %}
+
+    {% if song %}
+        <h2>Now Playing:</h2>
+        <audio id="player" controls preload="metadata">
+            <source src="{{ song }}" type="audio/mpeg">
+        </audio>
+
+        <div id="lyrics" style="margin-top:20px; font-size:18px; font-weight:bold; color:darkblue;">
+            (Lyrics will appear here while song plays)
+        </div>
+
+        <!-- Embed JSON -->
+        <script id="subs-data" type="application/json">
+            {{ subs | tojson }}
+        </script>
+
+        <script>
+            const subs = JSON.parse(document.getElementById("subs-data").textContent || "[]");
+            const audio = document.getElementById("player");
+            const lyricsDiv = document.getElementById("lyrics");
+            let lastLineIndex = -1;
+
+            console.log("Loaded subtitles:", subs.length, "entries");
+            if (subs.length > 0) {
+                console.log("First subtitle:", subs[0]);
+                console.log("Last subtitle:", subs[subs.length - 1]);
+            }
+
+            audio.addEventListener("timeupdate", () => {
+                const current = audio.currentTime;
+                
+                // Find current line with small tolerance for timing
+                let lineIndex = -1;
+                for (let i = 0; i < subs.length; i++) {
+                    if (current >= (subs[i].start - 0.5) && current <= (subs[i].end + 0.5)) {
+                        lineIndex = i;
+                        break;
+                    }
+                }
+
+                if (lineIndex !== -1 && lineIndex !== lastLineIndex) {
+                    lyricsDiv.innerText = subs[lineIndex].text;
+                    console.log(`Time: ${current.toFixed(1)}s - Showing line ${lineIndex}: "${subs[lineIndex].text}"`);
+                    lastLineIndex = lineIndex;
+                } else if (lineIndex === -1 && lastLineIndex !== -1) {
+                    lyricsDiv.innerText = "";
+                    lastLineIndex = -1;
+                }
+            });
+
+            audio.addEventListener("loadedmetadata", () => {
+                console.log("Audio loaded, duration:", audio.duration);
+            });
+
+            setInterval(() => {
+                if (!audio.paused) {
+                    console.log(`Current time: ${audio.currentTime.toFixed(1)}s`);
+                }
+            }, 5000);
+        </script>
+    {% endif %}
+</body>
+</html>
