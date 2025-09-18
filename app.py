@@ -8,6 +8,7 @@ from fastapi.templating import Jinja2Templates
 app = FastAPI()
 
 app.mount("/downloads", StaticFiles(directory="downloads"), name="downloads")
+app.mount("/static", StaticFiles(directory="static"), name="static")
 templates = Jinja2Templates(directory="templates")
 
 
@@ -102,6 +103,8 @@ async def get_subtitles(request: Request, url: str = Form(...)):
 
     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
         info = ydl.extract_info(url, download=False)
+        title = info.get("title")
+        thumbnail = info.get("thumbnail")
         subs_dict = info.get("subtitles") or info.get("automatic_captions") or {}
         subs_list = list(subs_dict.keys())
 
@@ -133,6 +136,8 @@ async def download(request: Request, url: str = Form(...), lang: str = Form("en"
     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
         info = ydl.extract_info(url, download=True)
         song_file = ydl.prepare_filename(info)
+        title = info.get("title")
+        thumbnail = info.get("thumbnail")
 
     base, _ = os.path.splitext(song_file)
 
@@ -189,6 +194,8 @@ async def download(request: Request, url: str = Form(...), lang: str = Form("en"
             "song": f"/downloads/{os.path.basename(song_file)}",
             "subs": subs,
             "subtitles": None,
-            "url": None
+            "url": None,
+            "title": title,
+            "thumbnail": thumbnail,
         }
     )

@@ -2,10 +2,11 @@
 <html>
 <head>
     <title>Lyrics Player</title>
+    <link rel="stylesheet" href="/static/styles.css">
 </head>
 <body>
+    {% if not (song and title) %}
     <h1>Play Music with Synced Lyrics</h1>
-
     {% if not subtitles %}
         <form action="/get_subtitles" method="post">
             <input type="text" name="url" placeholder="YouTube URL" required>
@@ -23,12 +24,37 @@
             <button type="submit">Download & Play</button>
         </form>
     {% endif %}
+{% endif %}
+
+    {% if song and title and thumbnail %}
+    <div style="text-align:center; margin-bottom:20px;">
+        <img src="{{ thumbnail }}" alt="Thumbnail" style="max-width:200px; border-radius:12px; box-shadow:0 2px 8px #aaa;">
+        <div style="font-size:1.3em; font-weight:bold; margin-top:10px;">{{ title }}</div>
+    </div>
+    {% endif %}
 
     {% if song %}
         <h2>Now Playing:</h2>
-        <audio id="player" controls preload="metadata">
-            <source src="{{ song }}" type="audio/mpeg">
-        </audio>
+        <audio id="player" preload="metadata" style="display:none;">
+    <source src="{{ song }}" type="audio/mpeg">
+</audio>
+<div id="custom-audio-bar-container">
+    <div id="custom-audio-bar-bg">
+        <div id="custom-audio-bar-progress"></div>
+        <div id="custom-audio-bar-thumb"></div>
+    </div>
+</div>
+<div id="audio-controls" style="display:flex; justify-content:center; gap:30px; margin-top:18px;">
+    <button id="restart-btn" type="button">⟲</button>
+    <button id="pause-resume-btn" type="button">⏸</button>
+</div>
+
+        <!-- Typing box for current lyric line -->
+        <div id="typing-box" style="margin: 30px auto 0 auto; max-width: 600px; min-height: 40px; background: #1a237e; border-radius: 8px; padding: 12px 18px; box-shadow: 0 1px 6px rgba(60,60,60,0.06); text-align: center; position:relative;">
+    <div id="highlighted-lyric" style="font-size:18px; font-family:inherit; min-height:24px;"></div>
+    <input id="typing-input" type="text" autocomplete="off" spellcheck="false"
+           style="position:absolute; left:0; top:0; width:100%; height:100%; opacity:0; z-index:2;">
+</div>
 
         <div id="lyrics" style="margin-top:20px; font-size:18px; font-weight:bold; color:darkblue;">
             (Lyrics will appear here while song plays)
@@ -38,51 +64,7 @@
         <script id="subs-data" type="application/json">
             {{ subs | tojson }}
         </script>
-
-        <script>
-            const subs = JSON.parse(document.getElementById("subs-data").textContent || "[]");
-            const audio = document.getElementById("player");
-            const lyricsDiv = document.getElementById("lyrics");
-            let lastLineIndex = -1;
-
-            console.log("Loaded subtitles:", subs.length, "entries");
-            if (subs.length > 0) {
-                console.log("First subtitle:", subs[0]);
-                console.log("Last subtitle:", subs[subs.length - 1]);
-            }
-
-            audio.addEventListener("timeupdate", () => {
-                const current = audio.currentTime;
-                
-                // Find current line with small tolerance for timing
-                let lineIndex = -1;
-                for (let i = 0; i < subs.length; i++) {
-                    if (current >= (subs[i].start - 0.5) && current <= (subs[i].end + 0.5)) {
-                        lineIndex = i;
-                        break;
-                    }
-                }
-
-                if (lineIndex !== -1 && lineIndex !== lastLineIndex) {
-                    lyricsDiv.innerText = subs[lineIndex].text;
-                    console.log(`Time: ${current.toFixed(1)}s - Showing line ${lineIndex}: "${subs[lineIndex].text}"`);
-                    lastLineIndex = lineIndex;
-                } else if (lineIndex === -1 && lastLineIndex !== -1) {
-                    lyricsDiv.innerText = "";
-                    lastLineIndex = -1;
-                }
-            });
-
-            audio.addEventListener("loadedmetadata", () => {
-                console.log("Audio loaded, duration:", audio.duration);
-            });
-
-            setInterval(() => {
-                if (!audio.paused) {
-                    console.log(`Current time: ${audio.currentTime.toFixed(1)}s`);
-                }
-            }, 5000);
-        </script>
     {% endif %}
+    <script src="/static/script.js"></script>
 </body>
 </html>
