@@ -109,3 +109,57 @@ setInterval(() => {
 document.getElementById("typing-box").addEventListener("click", () => {
     if (canType) typingInput.focus();
 });
+
+// Music bar
+const barContainer = document.getElementById("custom-audio-bar-container");
+const barBg = document.getElementById("custom-audio-bar-bg");
+const barProgress = document.getElementById("custom-audio-bar-progress");
+const barThumb = document.getElementById("custom-audio-bar-thumb");
+
+function updateBar() {
+    const percent = audio.currentTime / audio.duration;
+    barProgress.style.width = (percent * 100) + "%";
+    barThumb.style.left = `calc(${percent * 100}% - 8px)`;
+}
+
+audio.addEventListener("timeupdate", updateBar);
+audio.addEventListener("loadedmetadata", updateBar);
+
+barBg.addEventListener("click", function(e) {
+    const rect = barBg.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const percent = x / rect.width;
+    audio.currentTime = percent * audio.duration;
+    updateBar();
+});
+
+// Music Control Button
+const restartBtn = document.getElementById("restart-btn");
+const pauseResumeBtn = document.getElementById("pause-resume-btn");
+
+restartBtn.onclick = () => {
+    audio.currentTime = 0;
+    audio.play();
+};
+
+pauseResumeBtn.onclick = () => {
+    if (audio.paused) {
+        audio.play();
+        pauseResumeBtn.textContent = "⏸";
+    } else {
+        audio.pause();
+        pauseResumeBtn.textContent = "▶";
+    }
+};
+
+document.addEventListener("keydown", function(e) {
+    if (e.key === "Enter" && audio.src) {
+        if (audio.paused) {
+            audio.play();
+            pauseResumeBtn.textContent = "⏸";
+        } else {
+            audio.pause();
+            pauseResumeBtn.textContent = "▶";
+        }
+    }
+});

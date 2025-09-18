@@ -1,6 +1,6 @@
 body {
-    background: #fff;
-    color: #222;
+    background: #37393c;
+    color: #f0f0f0;
     font-family: 'Segoe UI', Arial, sans-serif;
     margin: 0;
     padding: 0;
@@ -70,6 +70,68 @@ audio {
 #lyrics div {
     margin: 4px 0;
 }
+
+#custom-audio-bar-container {
+    width: 80%;
+    margin: 30px auto 0 auto;
+    position: relative;
+    height: 16px;
+    user-select: none;
+}
+
+#custom-audio-bar-bg {
+    width: 100%;
+    height: 4px;
+    background: #fff;
+    border-radius: 4px;
+    position: relative;
+    top: 12px;
+    box-shadow: 0 1px 3px rgba(60,60,60,0.10);
+}
+
+#custom-audio-bar-progress {
+    height: 4px;
+    background: #f8f8ff;
+    border-radius: 4px;
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 0%;
+    transition: width 0.1s linear;
+}
+
+#custom-audio-bar-thumb {
+    position: absolute;
+    top: -4px;
+    left: 0;
+    width: 5px;
+    height: 5px;
+    background: #fff;
+    border-radius: 50%;
+    box-shadow: 0 0 8px #fff, 0 2px 8px #aaa;
+    border: 2px solid #f8f8ff;
+    transition: left 0.1s linear;
+    pointer-events: none;
+}
+
+#audio-controls button {
+    background: transparent;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 28px;
+    font-size: 1.1em;
+    cursor: pointer;
+    box-shadow: none;
+    transition: background 0.2s, color 0.2s;
+}
+
+#audio-controls button:hover {
+    background: rgba(255,255,255,0.08);
+    color: #fff;
+}
+
+
 
 ::-webkit-input-placeholder { color: #888; }
 ::-moz-placeholder { color: #888; }
