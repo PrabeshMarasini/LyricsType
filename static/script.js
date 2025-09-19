@@ -7,14 +7,17 @@ let lastLineIndex = -1;
 let canType = false;
 let currentLyric = "";
 
+// Initialize lyrics display
+lyricsDiv.innerHTML = "";
+
 function renderLyrics(lineIndex) {
     let html = "";
     if (lineIndex > 0) {
-        html += `<div style="color: #ffeb3b; opacity: 0.5; font-weight:normal; font-size:24px; margin: 8px 0;">${subs[lineIndex - 1].text}</div>`;
+        html += `<div style="color: #ffeb3b; opacity: 0.5; font-weight:normal; font-size:20px; margin: 6px 0;">${subs[lineIndex - 1].text}</div>`;
     }
-    html += `<div style="color: #ffeb3b; font-weight:bold; font-size:30px; margin: 12px 0;">${subs[lineIndex].text}</div>`;
+    html += `<div style="color: #ffeb3b; font-weight:bold; font-size:24px; margin: 8px 0;">${subs[lineIndex].text}</div>`;
     if (lineIndex < subs.length - 1) {
-        html += `<div style="color: #ffeb3b; opacity: 0.5; font-weight:normal; font-size:24px; margin: 8px 0;">${subs[lineIndex + 1].text}</div>`;
+        html += `<div style="color: #ffeb3b; opacity: 0.5; font-weight:normal; font-size:20px; margin: 6px 0;">${subs[lineIndex + 1].text}</div>`;
     }
     lyricsDiv.innerHTML = html;
 }
@@ -186,44 +189,82 @@ barBg.addEventListener("click", function (e) {
 });
 
 // Music Control Button
-const restartBtn = document.getElementById("restart-btn");
 const pauseResumeBtn = document.getElementById("pause-resume-btn");
 
-restartBtn.onclick = () => {
-    audio.currentTime = 0;
-    audio.play();
-};
+// Function to update pause/resume button state
+function updatePauseResumeButton() {
+    if (audio.paused) {
+        pauseResumeBtn.textContent = "▶";
+    } else {
+        pauseResumeBtn.textContent = "⏸";
+    }
+}
+
+// Initialize button state to paused
+updatePauseResumeButton();
+
+// Thumbnail animation functionality
+let animationInterval;
+
+function startThumbnailAnimation() {
+    const leftThumb = document.querySelector('.left-thumbnail');
+    const rightThumb = document.querySelector('.right-thumbnail');
+    
+    // Reset classes
+    leftThumb.classList.remove('slide-left');
+    rightThumb.classList.remove('slide-right');
+    
+    // Trigger reflow
+    void leftThumb.offsetWidth;
+    void rightThumb.offsetWidth;
+    
+    // Add animation classes
+    leftThumb.classList.add('slide-left');
+    rightThumb.classList.add('slide-right');
+}
+
+// Start animation loop
+function initThumbnailAnimation() {
+    // Start first animation after 2 seconds
+    setTimeout(() => {
+        startThumbnailAnimation();
+        
+        // Set up continuous loop every 3 seconds
+        animationInterval = setInterval(startThumbnailAnimation, 3000);
+    }, 2000);
+}
+
+// Initialize thumbnail animation when page loads
+if (document.querySelector('.thumbnail-container')) {
+    initThumbnailAnimation();
+}
 
 pauseResumeBtn.onclick = () => {
     if (audio.paused) {
         audio.play();
-        pauseResumeBtn.textContent = "⏸";
     } else {
         audio.pause();
-        pauseResumeBtn.textContent = "▶";
     }
+    updatePauseResumeButton();
 };
+
+// Update button state when audio playback state changes
+audio.addEventListener("play", updatePauseResumeButton);
+audio.addEventListener("pause", updatePauseResumeButton);
+audio.addEventListener("ended", () => {
+    audio.pause();
+    updatePauseResumeButton();
+});
 
 document.addEventListener("keydown", function (e) {
     // Prevent space bar from triggering when typing in the input
-    if (e.key === " " && e.target !== typingInput && audio.src) {
+    if ((e.key === " " || e.key === "Enter") && e.target !== typingInput && audio.src) {
         e.preventDefault();
         if (audio.paused) {
             audio.play();
-            pauseResumeBtn.textContent = "⏸";
         } else {
             audio.pause();
-            pauseResumeBtn.textContent = "▶";
         }
-    }
-
-    if (e.key === "Enter" && audio.src) {
-        if (audio.paused) {
-            audio.play();
-            pauseResumeBtn.textContent = "⏸";
-        } else {
-            audio.pause();
-            pauseResumeBtn.textContent = "▶";
-        }
+        updatePauseResumeButton();
     }
 });

@@ -30,42 +30,41 @@
 {% endif %}
 
     {% if song and title and thumbnail %}
-    <div style="text-align:center; margin-bottom:20px;">
-        <img src="{{ thumbnail }}" alt="Thumbnail" style="max-width:200px; border-radius:12px; box-shadow:0 2px 8px #aaa;">
-        <div style="font-size:1.3em; font-weight:bold; margin-top:10px;">{{ title }}</div>
+    <div class="song-info">
+        <div class="thumbnail-container">
+            <img src="{{ thumbnail }}" alt="{{ title }}" class="song-thumbnail main-thumbnail">
+            <img src="{{ thumbnail }}" alt="{{ title }}" class="song-thumbnail left-thumbnail">
+            <img src="{{ thumbnail }}" alt="{{ title }}" class="song-thumbnail right-thumbnail">
+        </div>
+        <div class="song-title">{{ title }}</div>
     </div>
     {% endif %}
 
     {% if song %}
-        <h2>Now Playing:</h2>
-        <audio id="player" preload="metadata" style="display:none;">
-    <source src="{{ song }}" type="audio/mpeg">
-</audio>
-<div id="audio-bar-wrapper">
-    <div id="time-current">0:00</div>
-    <div id="custom-audio-bar-container">
-        <div id="custom-audio-bar-bg">
-            <div id="custom-audio-bar-progress"></div>
-            <div id="custom-audio-bar-thumb"></div>
+        <audio id="player" preload="metadata">
+            <source src="{{ song }}" type="audio/mpeg">
+        </audio>
+        <div id="audio-bar-wrapper">
+            <div id="time-current">0:00</div>
+            <div id="custom-audio-bar-container">
+                <div id="custom-audio-bar-bg">
+                    <div id="custom-audio-bar-progress"></div>
+                    <div id="custom-audio-bar-thumb"></div>
+                </div>
+            </div>
+            <div id="time-total">0:00</div>
         </div>
-    </div>
-    <div id="time-total">0:00</div>
-</div>
-<div id="audio-controls">
-    <button id="restart-btn" type="button">⟲</button>
-    <button id="pause-resume-btn" type="button">⏸</button>
-</div>
+        <div id="audio-controls">
+            <button id="pause-resume-btn" type="button">▶</button>
+        </div>
 
         <!-- Typing box for current lyric line -->
-        <div id="typing-box" style="margin: 30px auto 0 auto; max-width: 600px; min-height: 40px; padding: 12px 18px; text-align: center; position:relative;">
-    <div id="highlighted-lyric" style="font-size:23px; font-family:'Poppins', sans-serif; font-weight:700; min-height:31px;"></div>
-    <input id="typing-input" type="text" autocomplete="off" spellcheck="false"
-           style="position:absolute; left:0; top:0; width:100%; height:100%; opacity:0; z-index:2;">
-</div>
-
-        <div id="lyrics" style="margin-top:20px; font-size:18px; font-weight:bold; color:darkblue;">
-            (Lyrics will appear here while song plays)
+        <div id="typing-box">
+            <div id="highlighted-lyric"></div>
+            <input id="typing-input" type="text" autocomplete="off" spellcheck="false">
         </div>
+
+        <div id="lyrics"></div>
 
         <!-- Embed JSON -->
         <script id="subs-data" type="application/json">
