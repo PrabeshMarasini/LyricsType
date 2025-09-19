@@ -2,6 +2,9 @@
 <html>
 <head>
     <title>Lyrics Player</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/static/styles.css">
 </head>
 <body>
@@ -38,20 +41,24 @@
         <audio id="player" preload="metadata" style="display:none;">
     <source src="{{ song }}" type="audio/mpeg">
 </audio>
-<div id="custom-audio-bar-container">
-    <div id="custom-audio-bar-bg">
-        <div id="custom-audio-bar-progress"></div>
-        <div id="custom-audio-bar-thumb"></div>
+<div id="audio-bar-wrapper">
+    <div id="time-current">0:00</div>
+    <div id="custom-audio-bar-container">
+        <div id="custom-audio-bar-bg">
+            <div id="custom-audio-bar-progress"></div>
+            <div id="custom-audio-bar-thumb"></div>
+        </div>
     </div>
+    <div id="time-total">0:00</div>
 </div>
-<div id="audio-controls" style="display:flex; justify-content:center; gap:30px; margin-top:18px;">
+<div id="audio-controls">
     <button id="restart-btn" type="button">⟲</button>
     <button id="pause-resume-btn" type="button">⏸</button>
 </div>
 
         <!-- Typing box for current lyric line -->
-        <div id="typing-box" style="margin: 30px auto 0 auto; max-width: 600px; min-height: 40px; background: #1a237e; border-radius: 8px; padding: 12px 18px; box-shadow: 0 1px 6px rgba(60,60,60,0.06); text-align: center; position:relative;">
-    <div id="highlighted-lyric" style="font-size:18px; font-family:inherit; min-height:24px;"></div>
+        <div id="typing-box" style="margin: 30px auto 0 auto; max-width: 600px; min-height: 40px; padding: 12px 18px; text-align: center; position:relative;">
+    <div id="highlighted-lyric" style="font-size:23px; font-family:'Poppins', sans-serif; font-weight:700; min-height:31px;"></div>
     <input id="typing-input" type="text" autocomplete="off" spellcheck="false"
            style="position:absolute; left:0; top:0; width:100%; height:100%; opacity:0; z-index:2;">
 </div>

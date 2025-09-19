@@ -10,11 +10,11 @@ let currentLyric = "";
 function renderLyrics(lineIndex) {
     let html = "";
     if (lineIndex > 0) {
-        html += `<div style="color: #b0b0b0; font-weight:normal; font-size:16px;">${subs[lineIndex-1].text}</div>`;
+        html += `<div style="color: #ffeb3b; opacity: 0.5; font-weight:normal; font-size:24px; margin: 8px 0;">${subs[lineIndex - 1].text}</div>`;
     }
-    html += `<div style="color: #1a237e; font-weight:bold; font-size:20px;">${subs[lineIndex].text}</div>`;
+    html += `<div style="color: #ffeb3b; font-weight:bold; font-size:30px; margin: 12px 0;">${subs[lineIndex].text}</div>`;
     if (lineIndex < subs.length - 1) {
-        html += `<div style="color: #b0b0b0; font-weight:normal; font-size:16px;">${subs[lineIndex+1].text}</div>`;
+        html += `<div style="color: #ffeb3b; opacity: 0.5; font-weight:normal; font-size:24px; margin: 8px 0;">${subs[lineIndex + 1].text}</div>`;
     }
     lyricsDiv.innerHTML = html;
 }
@@ -115,17 +115,69 @@ const barContainer = document.getElementById("custom-audio-bar-container");
 const barBg = document.getElementById("custom-audio-bar-bg");
 const barProgress = document.getElementById("custom-audio-bar-progress");
 const barThumb = document.getElementById("custom-audio-bar-thumb");
+const timeCurrent = document.getElementById("time-current");
+const timeTotal = document.getElementById("time-total");
+
+function formatTime(seconds) {
+    if (isNaN(seconds) || seconds < 0) return "0:00";
+    const mins = Math.floor(seconds / 60);
+    const secs = Math.floor(seconds % 60);
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
+}
 
 function updateBar() {
+    if (!audio.duration) return;
+
     const percent = audio.currentTime / audio.duration;
     barProgress.style.width = (percent * 100) + "%";
     barThumb.style.left = `calc(${percent * 100}% - 8px)`;
+
+    // Update current time
+    if (timeCurrent) {
+        timeCurrent.textContent = formatTime(audio.currentTime);
+    }
 }
 
-audio.addEventListener("timeupdate", updateBar);
-audio.addEventListener("loadedmetadata", updateBar);
+function setTotalTime() {
+    // Set total time when metadata loads
+    if (timeTotal && audio.duration && audio.duration > 0) {
+        timeTotal.textContent = formatTime(audio.duration);
+        console.log("Total time set to:", formatTime(audio.duration));
+    }
+}
 
-barBg.addEventListener("click", function(e) {
+// Initialize time displays
+if (timeCurrent) timeCurrent.textContent = "0:00";
+if (timeTotal) timeTotal.textContent = "0:00";
+
+audio.addEventListener("timeupdate", updateBar);
+audio.addEventListener("loadedmetadata", () => {
+    console.log("Audio loaded, duration:", audio.duration);
+    setTotalTime();
+    updateBar(); // Initial bar update
+});
+
+// Also try to set total time when audio can play
+audio.addEventListener("canplay", () => {
+    if (audio.duration && audio.duration > 0 && timeTotal) {
+        setTotalTime();
+    }
+});
+
+// Additional event listeners to catch duration when it becomes available
+audio.addEventListener("durationchange", () => {
+    if (audio.duration && audio.duration > 0) {
+        setTotalTime();
+    }
+});
+
+audio.addEventListener("loadeddata", () => {
+    if (audio.duration && audio.duration > 0) {
+        setTotalTime();
+    }
+});
+
+barBg.addEventListener("click", function (e) {
     const rect = barBg.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const percent = x / rect.width;
@@ -152,7 +204,19 @@ pauseResumeBtn.onclick = () => {
     }
 };
 
-document.addEventListener("keydown", function(e) {
+document.addEventListener("keydown", function (e) {
+    // Prevent space bar from triggering when typing in the input
+    if (e.key === " " && e.target !== typingInput && audio.src) {
+        e.preventDefault();
+        if (audio.paused) {
+            audio.play();
+            pauseResumeBtn.textContent = "⏸";
+        } else {
+            audio.pause();
+            pauseResumeBtn.textContent = "▶";
+        }
+    }
+
     if (e.key === "Enter" && audio.src) {
         if (audio.paused) {
             audio.play();
