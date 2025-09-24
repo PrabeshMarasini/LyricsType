@@ -8,12 +8,16 @@
     <link rel="stylesheet" href="/static/styles.css">
 </head>
 <body>
-    {% if not (song and title) %}
+    {% if not song %}
     <h1>Play Music with Synced Lyrics</h1>
-    {% if not subtitles %}
+    {% if subtitles is not defined or subtitles is none %}
         <form action="/get_subtitles" method="post">
             <input type="text" name="url" placeholder="YouTube URL" required>
             <button type="submit">Check Subtitles</button>
+        </form>
+    {% elif subtitles|length == 0 %}
+        <form>
+            <input type="text" value="No Subtitles Found!" disabled>
         </form>
     {% else %}
         <form action="/download" method="post">
@@ -64,7 +68,11 @@
             <input id="typing-input" type="text" autocomplete="off" spellcheck="false">
         </div>
 
-        <div id="lyrics"></div>
+        <div id="lyrics">
+            {% if subs|length == 0 %}
+            <div style="color: #ffeb3b; font-size: 18px; text-align: center; opacity: 0.7; margin: 20px 0;">No Subtitles found</div>
+            {% endif %}
+        </div>
 
         <!-- Embed JSON -->
         <script id="subs-data" type="application/json">
