@@ -2,83 +2,116 @@
 <html>
 <head>
     <title>Lyrics Player</title>
+    <!-- Favicons -->
+    <link rel="icon" type="image/png" sizes="16x16" href="/static/favicons/favicon-16x16.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/static/favicons/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="48x48" href="/static/favicons/favicon-48x48.png">
+    <link rel="icon" type="image/png" sizes="64x64" href="/static/favicons/favicon-64x64.png">
+    <link rel="icon" type="image/png" sizes="128x128" href="/static/favicons/favicon-128x128.png">
+    <link rel="icon" type="image/png" sizes="256x256" href="/static/favicons/favicon-256x256.png">
+    
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/static/styles.css">
 </head>
 <body>
-    {% if not song %}
-    <h1>Play Music with Synced Lyrics</h1>
-    {% if subtitles is not defined or subtitles is none %}
-        <form action="/get_subtitles" method="post">
-            <input type="text" name="url" placeholder="YouTube URL" required>
-            <button type="submit">Check Subtitles</button>
-        </form>
-    {% elif subtitles|length == 0 %}
-        <form>
-            <input type="text" value="No Subtitles Found!" disabled>
-        </form>
-    {% else %}
-        <form action="/download" method="post">
-            <input type="hidden" name="url" value="{{ url }}">
-            <label>Choose subtitle:</label>
-            <select name="lang" required>
-                {% for lang in subtitles %}
-                    <option value="{{ lang }}">{{ lang }}</option>
-                {% endfor %}
-            </select>
-            <button type="submit">Download & Play</button>
-        </form>
-    {% endif %}
-{% endif %}
-
-    {% if song and title and thumbnail %}
-    <div class="song-info">
-        <div class="thumbnail-container">
-            <img src="{{ thumbnail }}" alt="{{ title }}" class="song-thumbnail main-thumbnail">
-            <img src="{{ thumbnail }}" alt="{{ title }}" class="song-thumbnail left-thumbnail">
-            <img src="{{ thumbnail }}" alt="{{ title }}" class="song-thumbnail right-thumbnail">
+    <div class="container">
+        {% if not song %}
+        <div class="logo-container">
+            <img src="/static/logo.png" alt="Lyrics Player Logo">
+            <h2>Lyrics Player</h2>
         </div>
-        <div class="song-title">{{ title }}</div>
-    </div>
-    {% endif %}
+        
+        {% if subtitles is not defined or subtitles is none %}
+            <form action="/get_subtitles" method="post">
+                <h3 class="form-title">Find Lyrics for Any Song</h3>
+                <p class="form-subtitle">Enter a YouTube URL to get started</p>
+                <input type="text" name="url" placeholder="https://www.youtube.com/watch?v=..." required>
+                <button type="submit">Check for Lyrics</button>
+            </form>
+        {% elif subtitles|length == 0 %}
+            <form>
+                <h3 class="form-title">No Lyrics Found</h3>
+                <p class="form-subtitle">Sorry, we couldn't find any lyrics for this video</p>
+                <div class="message error">No subtitles available for this video</div>
+            </form>
+            <!-- Try another song button -->
+            <form action="/" method="get">
+                <button type="submit" class="try-another-btn">Try Another Song</button>
+            </form>
+        {% else %}
+            <form action="/download" method="post">
+                <h3 class="form-title">Select Lyrics Language</h3>
+                <p class="form-subtitle">Choose the language for the lyrics</p>
+                <input type="hidden" name="url" value="{{ url }}">
+                <label for="lang">Available Languages:</label>
+                <select name="lang" id="lang" required>
+                    {% for lang in subtitles %}
+                        <option value="{{ lang }}">{{ lang }}</option>
+                    {% endfor %}
+                </select>
+                <button type="submit">Download & Play</button>
+            </form>
+        {% endif %}
+        {% endif %}
 
-    {% if song %}
-        <audio id="player" preload="metadata">
-            <source src="{{ song }}" type="audio/mpeg">
-        </audio>
-        <div id="audio-bar-wrapper">
-            <div id="time-current">0:00</div>
-            <div id="custom-audio-bar-container">
-                <div id="custom-audio-bar-bg">
-                    <div id="custom-audio-bar-progress"></div>
-                    <div id="custom-audio-bar-thumb"></div>
-                </div>
+        {% if song and title and thumbnail %}
+        <div class="song-info">
+            <div class="thumbnail-container">
+                <img src="{{ thumbnail }}" alt="{{ title }}" class="song-thumbnail main-thumbnail">
+                <img src="{{ thumbnail }}" alt="{{ title }}" class="song-thumbnail left-thumbnail">
+                <img src="{{ thumbnail }}" alt="{{ title }}" class="song-thumbnail right-thumbnail">
             </div>
-            <div id="time-total">0:00</div>
+            <div class="song-title">{{ title }}</div>
         </div>
-        <div id="audio-controls">
-            <button id="pause-resume-btn" type="button">▶</button>
-        </div>
+        {% endif %}
 
-        <!-- Typing box for current lyric line -->
-        <div id="typing-box">
-            <div id="highlighted-lyric"></div>
-            <input id="typing-input" type="text" autocomplete="off" spellcheck="false">
-        </div>
+        {% if song %}
+            <audio id="player" preload="metadata">
+                <source src="{{ song }}" type="audio/mpeg">
+            </audio>
+            <div id="audio-bar-wrapper">
+                <div id="time-current">0:00</div>
+                <div id="custom-audio-bar-container">
+                    <div id="custom-audio-bar-bg">
+                        <div id="custom-audio-bar-progress"></div>
+                        <div id="custom-audio-bar-thumb"></div>
+                    </div>
+                </div>
+                <div id="time-total">0:00</div>
+            </div>
+            <div id="audio-controls">
+                <button id="pause-resume-btn" type="button">▶</button>
+            </div>
 
-        <div id="lyrics">
-            {% if subs|length == 0 %}
-            <div style="color: #ffeb3b; font-size: 18px; text-align: center; opacity: 0.7; margin: 20px 0;">No Subtitles found</div>
-            {% endif %}
-        </div>
+            <!-- Typing box for current lyric line -->
+            <div id="typing-box">
+                <div id="highlighted-lyric"></div>
+                <input id="typing-input" type="text" autocomplete="off" spellcheck="false">
+            </div>
 
-        <!-- Embed JSON -->
-        <script id="subs-data" type="application/json">
-            {{ subs | tojson }}
-        </script>
-    {% endif %}
+            <div id="lyrics">
+                {% if subs|length == 0 %}
+                <div class="message error">No lyrics found for this song</div>
+                <!-- Try another song button -->
+                <form action="/" method="get">
+                    <button type="submit" class="try-another-btn">Try Another Song</button>
+                </form>
+                {% endif %}
+            </div>
+
+            <!-- Embed JSON -->
+            <script id="subs-data" type="application/json">
+                {{ subs | tojson }}
+            </script>
+        {% endif %}
+    </div>
+    
+    <div class="footer">
+        <p>Lyrics Player &copy; 2025 | Synced Lyrics with Typing Practice</p>
+    </div>
+    
     <script src="/static/script.js"></script>
 </body>
 </html>
