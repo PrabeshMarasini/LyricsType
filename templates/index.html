@@ -19,7 +19,7 @@
 </head>
 
 <body>
-    <div class="container">
+    <div class="container{% if song %} audio-player{% endif %}">
         {% if not song %}
         <div class="logo-container">
             <img src="/static/logo.png" alt="Lyrics Player Logo">

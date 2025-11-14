@@ -5,6 +5,7 @@ body {
     margin: 0;
     padding: 0;
     min-height: 100vh;
+    overflow-x: hidden;
 }
 
 h1 {
@@ -23,6 +24,11 @@ h1 {
     padding: 20px;
     box-sizing: border-box;
     margin: 0 auto;
+}
+
+/* Wider container for audio player page */
+.container.audio-player {
+    max-width: 1200px;
 }
 
 /* Logo section */
@@ -312,7 +318,7 @@ audio {
 }
 
 #audio-bar-wrapper {
-    width: 85%;
+    width: 60%;
     margin: 25px auto 0 auto;
     display: flex;
     align-items: center;
@@ -361,7 +367,7 @@ audio {
 
 #custom-audio-bar-thumb {
     position: absolute;
-    top: -4px;
+    top: -7px;
     left: 0;
     width: 14px;
     height: 14px;
@@ -544,16 +550,17 @@ audio {
 }
 
 .dialog-btn {
-    padding: 12px 25px;
+    padding: 8px 16px;
     border: none;
-    border-radius: 8px;
-    font-size: 1rem;
+    border-radius: 6px;
+    font-size: 0.9rem;
     font-family: 'Poppins', sans-serif;
     font-weight: 500;
     cursor: pointer;
     transition: all 0.3s ease;
     flex: 1;
-    max-width: 150px;
+    max-width: 120px;
+    white-space: nowrap;
 }
 
 .dialog-btn.primary {
