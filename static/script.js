@@ -7,6 +7,25 @@ let lastLineIndex = -1;
 let canType = false;
 let currentLyric = "";
 
+// Performance tracking variables
+let totalCharacters = 0;
+let correctCharacters = 0;
+let missedCharacters = 0;
+let currentLineCorrectChars = 0;
+let performanceStats = [];
+
+// Calculate total characters on load
+function calculateTotalCharacters() {
+    totalCharacters = subs.reduce((total, sub) => {
+        return total + sub.text.replace(/[^\w\s]/g, '').length;
+    }, 0);
+}
+
+// Initialize performance tracking
+if (subs.length > 0) {
+    calculateTotalCharacters();
+}
+
 // Initialize lyrics display
 lyricsDiv.innerHTML = "";
 
@@ -35,6 +54,8 @@ function highlightTyped(typed, lyric) {
     let lyricArr = lyric.split("");
     let typedArr = typed.split("");
     let lyricPos = 0;
+    let correctCount = 0;
+    
     for (let t = 0; t < typedArr.length && lyricPos < lyricArr.length; t++) {
         // Find the next matching character in lyric
         let found = false;
@@ -47,6 +68,10 @@ function highlightTyped(typed, lyric) {
                 html += `<span style="color:#fff">${lyricArr[l]}</span>`;
                 lyricPos = l + 1;
                 found = true;
+                // Count correct characters (excluding spaces and punctuation)
+                if (/\w/.test(lyricArr[l])) {
+                    correctCount++;
+                }
                 break;
             }
         }
@@ -58,6 +83,10 @@ function highlightTyped(typed, lyric) {
     for (let k = lyricPos; k < lyricArr.length; k++) {
         html += `<span style="color:#b0c4de; opacity:0.4">${lyricArr[k]}</span>`;
     }
+    
+    // Update current line correct characters count
+    currentLineCorrectChars = correctCount;
+    
     return html;
 }
 
@@ -73,11 +102,20 @@ audio.addEventListener("timeupdate", () => {
     }
 
     if (lineIndex !== -1 && lineIndex !== lastLineIndex) {
+        // Save stats for previous line if it existed
+        if (lastLineIndex !== -1) {
+            saveLineStats(lastLineIndex);
+        }
+        
         renderLyrics(lineIndex);
         renderTypingBox(lineIndex);
         canType = true;
         lastLineIndex = lineIndex;
+        currentLineCorrectChars = 0; // Reset for new line
     } else if (lineIndex === -1 && lastLineIndex !== -1) {
+        // Save stats for the line that just ended
+        saveLineStats(lastLineIndex);
+        
         lyricsDiv.innerHTML = "";
         highlightedLyric.innerHTML = "";
         typingInput.value = "";
@@ -86,6 +124,23 @@ audio.addEventListener("timeupdate", () => {
         lastLineIndex = -1;
     }
 });
+
+function saveLineStats(lineIndex) {
+    if (lineIndex >= 0 && lineIndex < subs.length) {
+        const lineText = subs[lineIndex].text.replace(/[^\w\s]/g, '');
+        const lineCharCount = lineText.length;
+        const missed = Math.max(0, lineCharCount - currentLineCorrectChars);
+        
+        correctCharacters += currentLineCorrectChars;
+        missedCharacters += missed;
+        
+        performanceStats[lineIndex] = {
+            total: lineCharCount,
+            correct: currentLineCorrectChars,
+            missed: missed
+        };
+    }
+}
 
 typingInput.addEventListener("input", () => {
     if (!canType) return;
@@ -254,6 +309,69 @@ audio.addEventListener("pause", updatePauseResumeButton);
 audio.addEventListener("ended", () => {
     audio.pause();
     updatePauseResumeButton();
+    
+    // Save stats for the last line if it was active
+    if (lastLineIndex !== -1) {
+        saveLineStats(lastLineIndex);
+    }
+    
+    // Show performance dialog
+    showPerformanceDialog();
+});
+
+function showPerformanceDialog() {
+    const accuracy = totalCharacters > 0 ? Math.round((correctCharacters / totalCharacters) * 100) : 0;
+    
+    // Update dialog content
+    document.getElementById('total-chars').textContent = totalCharacters;
+    document.getElementById('correct-chars').textContent = correctCharacters;
+    document.getElementById('missed-chars').textContent = missedCharacters;
+    document.getElementById('accuracy-percent').textContent = accuracy + '%';
+    
+    // Show dialog
+    document.getElementById('performance-dialog').style.display = 'flex';
+}
+
+function resetPerformanceStats() {
+    correctCharacters = 0;
+    missedCharacters = 0;
+    currentLineCorrectChars = 0;
+    performanceStats = [];
+    lastLineIndex = -1;
+}
+
+// Dialog button event listeners
+document.addEventListener('DOMContentLoaded', function() {
+    const startOverBtn = document.getElementById('start-over-btn');
+    const tryNextBtn = document.getElementById('try-next-btn');
+    const performanceDialog = document.getElementById('performance-dialog');
+    
+    if (startOverBtn) {
+        startOverBtn.addEventListener('click', function() {
+            // Hide dialog
+            performanceDialog.style.display = 'none';
+            
+            // Reset stats
+            resetPerformanceStats();
+            
+            // Reset audio and UI
+            audio.currentTime = 0;
+            audio.pause();
+            updatePauseResumeButton();
+            lyricsDiv.innerHTML = "";
+            highlightedLyric.innerHTML = "";
+            typingInput.value = "";
+            typingInput.disabled = true;
+            canType = false;
+        });
+    }
+    
+    if (tryNextBtn) {
+        tryNextBtn.addEventListener('click', function() {
+            // Navigate back to home page
+            window.location.href = '/';
+        });
+    }
 });
 
 document.addEventListener("keydown", function (e) {

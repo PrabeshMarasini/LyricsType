@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>Lyrics Player</title>
     <!-- Favicons -->
@@ -9,12 +10,14 @@
     <link rel="icon" type="image/png" sizes="64x64" href="/static/favicons/favicon-64x64.png">
     <link rel="icon" type="image/png" sizes="128x128" href="/static/favicons/favicon-128x128.png">
     <link rel="icon" type="image/png" sizes="256x256" href="/static/favicons/favicon-256x256.png">
-    
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="/static/styles.css">
 </head>
+
 <body>
     <div class="container">
         {% if not song %}
@@ -22,37 +25,37 @@
             <img src="/static/logo.png" alt="Lyrics Player Logo">
             <h2>Lyrics Player</h2>
         </div>
-        
+
         {% if subtitles is not defined or subtitles is none %}
-            <form action="/get_subtitles" method="post">
-                <h3 class="form-title">Find Lyrics for Any Song</h3>
-                <p class="form-subtitle">Enter a YouTube URL to get started</p>
-                <input type="text" name="url" placeholder="https://www.youtube.com/watch?v=..." required>
-                <button type="submit">Check for Lyrics</button>
-            </form>
+        <form action="/get_subtitles" method="post">
+            <h3 class="form-title">Find Lyrics for Any Song</h3>
+            <p class="form-subtitle">Enter a YouTube URL to get started</p>
+            <input type="text" name="url" placeholder="https://www.youtube.com/watch?v=..." required>
+            <button type="submit">Check for Lyrics</button>
+        </form>
         {% elif subtitles|length == 0 %}
-            <form>
-                <h3 class="form-title">No Lyrics Found</h3>
-                <p class="form-subtitle">Sorry, we couldn't find any lyrics for this video</p>
-                <div class="message error">No subtitles available for this video</div>
-            </form>
-            <!-- Try another song button -->
-            <form action="/" method="get">
-                <button type="submit" class="try-another-btn">Try Another Song</button>
-            </form>
+        <form>
+            <h3 class="form-title">No Lyrics Found</h3>
+            <p class="form-subtitle">Sorry, we couldn't find any lyrics for this video</p>
+            <div class="message error">No subtitles available for this video</div>
+        </form>
+        <!-- Try another song button -->
+        <form action="/" method="get">
+            <button type="submit" class="try-another-btn">Try Another Song</button>
+        </form>
         {% else %}
-            <form action="/download" method="post">
-                <h3 class="form-title">Select Lyrics Language</h3>
-                <p class="form-subtitle">Choose the language for the lyrics</p>
-                <input type="hidden" name="url" value="{{ url }}">
-                <label for="lang">Available Languages:</label>
-                <select name="lang" id="lang" required>
-                    {% for lang in subtitles %}
-                        <option value="{{ lang }}">{{ lang }}</option>
-                    {% endfor %}
-                </select>
-                <button type="submit">Download & Play</button>
-            </form>
+        <form action="/download" method="post">
+            <h3 class="form-title">Select Lyrics Language</h3>
+            <p class="form-subtitle">Choose the language for the lyrics</p>
+            <input type="hidden" name="url" value="{{ url }}">
+            <label for="lang">Available Languages:</label>
+            <select name="lang" id="lang" required>
+                {% for lang in subtitles %}
+                <option value="{{ lang }}">{{ lang }}</option>
+                {% endfor %}
+            </select>
+            <button type="submit">Download & Play</button>
+        </form>
         {% endif %}
         {% endif %}
 
@@ -68,50 +71,80 @@
         {% endif %}
 
         {% if song %}
-            <audio id="player" preload="metadata">
-                <source src="{{ song }}" type="audio/mpeg">
-            </audio>
-            <div id="audio-bar-wrapper">
-                <div id="time-current">0:00</div>
-                <div id="custom-audio-bar-container">
-                    <div id="custom-audio-bar-bg">
-                        <div id="custom-audio-bar-progress"></div>
-                        <div id="custom-audio-bar-thumb"></div>
-                    </div>
+        <audio id="player" preload="metadata">
+            <source src="{{ song }}" type="audio/mpeg">
+        </audio>
+        <div id="audio-bar-wrapper">
+            <div id="time-current">0:00</div>
+            <div id="custom-audio-bar-container">
+                <div id="custom-audio-bar-bg">
+                    <div id="custom-audio-bar-progress"></div>
+                    <div id="custom-audio-bar-thumb"></div>
                 </div>
-                <div id="time-total">0:00</div>
             </div>
-            <div id="audio-controls">
-                <button id="pause-resume-btn" type="button">▶</button>
-            </div>
+            <div id="time-total">0:00</div>
+        </div>
+        <div id="audio-controls">
+            <button id="pause-resume-btn" type="button">▶</button>
+        </div>
 
-            <!-- Typing box for current lyric line -->
-            <div id="typing-box">
-                <div id="highlighted-lyric"></div>
-                <input id="typing-input" type="text" autocomplete="off" spellcheck="false">
-            </div>
+        <!-- Typing box for current lyric line -->
+        <div id="typing-box">
+            <div id="highlighted-lyric"></div>
+            <input id="typing-input" type="text" autocomplete="off" spellcheck="false">
+        </div>
 
-            <div id="lyrics">
-                {% if subs|length == 0 %}
-                <div class="message error">No lyrics found for this song</div>
-                <!-- Try another song button -->
-                <form action="/" method="get">
-                    <button type="submit" class="try-another-btn">Try Another Song</button>
-                </form>
-                {% endif %}
-            </div>
+        <div id="lyrics">
+            {% if subs|length == 0 %}
+            <div class="message error">No lyrics found for this song</div>
+            <!-- Try another song button -->
+            <form action="/" method="get">
+                <button type="submit" class="try-another-btn">Try Another Song</button>
+            </form>
+            {% endif %}
+        </div>
 
-            <!-- Embed JSON -->
-            <script id="subs-data" type="application/json">
+        <!-- Embed JSON -->
+        <script id="subs-data" type="application/json">
                 {{ subs | tojson }}
             </script>
         {% endif %}
     </div>
-    
+
+    <!-- Performance Summary Dialog -->
+    <div id="performance-dialog" class="dialog-overlay" style="display: none;">
+        <div class="dialog-content">
+            <h3>Typing Performance Summary</h3>
+            <div class="stats-container">
+                <div class="stat-item">
+                    <span class="stat-label">Total Characters:</span>
+                    <span class="stat-value" id="total-chars">0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Typed Correctly:</span>
+                    <span class="stat-value" id="correct-chars">0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Missed:</span>
+                    <span class="stat-value" id="missed-chars">0</span>
+                </div>
+                <div class="stat-item accuracy">
+                    <span class="stat-label">Accuracy:</span>
+                    <span class="stat-value" id="accuracy-percent">0%</span>
+                </div>
+            </div>
+            <div class="dialog-buttons">
+                <button id="start-over-btn" class="dialog-btn primary">Start Over</button>
+                <button id="try-next-btn" class="dialog-btn secondary">Try Next Song</button>
+            </div>
+        </div>
+    </div>
+
     <div class="footer">
         <p>Lyrics Player &copy; 2025 | Synced Lyrics with Typing Practice</p>
     </div>
-    
+
     <script src="/static/script.js"></script>
 </body>
+
 </html>
