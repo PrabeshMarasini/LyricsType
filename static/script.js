@@ -320,7 +320,7 @@ audio.addEventListener("ended", () => {
 });
 
 function showPerformanceDialog() {
-    const accuracy = totalCharacters > 0 ? Math.round((correctCharacters / totalCharacters) * 100) : 0;
+    const accuracy = totalCharacters > 0 ? ((correctCharacters / totalCharacters) * 100).toFixed(1) : '0.0';
     
     // Update dialog content
     document.getElementById('total-chars').textContent = totalCharacters;
