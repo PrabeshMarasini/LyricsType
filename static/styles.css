@@ -106,34 +106,70 @@ label {
 button {
     background: #3498db;
     color: #fff;
-    border: none;
+    border: 2px solid transparent;
     border-radius: 8px;
-    padding: 14px;
+    padding: 12px;
     font-size: 1.1rem;
     font-family: 'Poppins', sans-serif;
     font-weight: 500;
     cursor: pointer;
-    transition: background 0.3s, transform 0.2s;
+    transition: background 0.3s;
     width: 100%;
     box-sizing: border-box;
+    position: relative;
+    transform: none;
+    transition: background 0.3s, transform 0s;
+    outline: none;
+    outline-offset: 0;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    -moz-appearance: none;
+    -webkit-appearance: none;
+    appearance: none;
+    margin: 0;
+    vertical-align: baseline;
 }
 
 button:hover {
     background: #2980b9;
-    transform: translateY(-2px);
 }
 
 button:active {
-    transform: translateY(0);
+    background: #1f5f8b;
+    transform: none;
+    border: 2px solid transparent;
+    padding: 12px;
+    margin: 0;
+}
+
+button:focus {
+    outline: none;
+    outline-offset: 0;
+    transform: none;
+    border: 2px solid transparent;
+    padding: 12px;
+    margin: 0;
+}
+
+button:focus-visible {
+    outline: none;
+    outline-offset: 0;
+}
+
+/* Firefox specific: Remove inner border on button click */
+button::-moz-focus-inner {
+    border: 0;
+    padding: 0;
+    margin: 0;
 }
 
 /* Try another song button */
 .try-another-btn {
     background: #95a5a6;
     color: #fff;
-    border: none;
+    border: 2px solid transparent;
     border-radius: 8px;
-    padding: 14px;
+    padding: 12px;
     font-size: 1.1rem;
     font-family: 'Poppins', sans-serif;
     font-weight: 500;
@@ -141,11 +177,54 @@ button:active {
     transition: background 0.3s;
     width: 100%;
     margin-top: 10px;
+    margin-bottom: 0;
     box-sizing: border-box;
+    position: relative;
+    transform: none;
+    transition: background 0.3s, transform 0s;
+    outline: none;
+    outline-offset: 0;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    -moz-appearance: none;
+    -webkit-appearance: none;
+    appearance: none;
+    vertical-align: baseline;
 }
 
 .try-another-btn:hover {
     background: #7f8c8d;
+}
+
+.try-another-btn:active {
+    background: #6c7b7d;
+    transform: none;
+    border: 2px solid transparent;
+    padding: 12px;
+    margin-top: 10px;
+    margin-bottom: 0;
+}
+
+.try-another-btn:focus {
+    outline: none;
+    outline-offset: 0;
+    transform: none;
+    border: 2px solid transparent;
+    padding: 12px;
+    margin-top: 10px;
+    margin-bottom: 0;
+}
+
+.try-another-btn:focus-visible {
+    outline: none;
+    outline-offset: 0;
+}
+
+/* Firefox specific: Remove inner border on button click */
+.try-another-btn::-moz-focus-inner {
+    border: 0;
+    padding: 0;
+    margin: 0;
 }
 
 /* Subtitle selection specific styles */
@@ -199,20 +278,11 @@ button:active {
 
 .song-info {
     text-align: center;
-    margin: 20px auto;
-    max-width: 400px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 15px;
+    margin: 15px auto;
+    max-width: 600px;
 }
 
-.song-thumbnail {
-    max-width: 300px;
-    border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    margin-bottom: 15px;
-}
+
 
 .song-title {
     font-size: 1.3em;
@@ -229,69 +299,7 @@ button:active {
     color: #2c3e50;
 }
 
-/* Thumbnail animation styles */
-.thumbnail-container {
-    position: relative;
-    width: 300px;
-    height: 300px;
-    margin: 0 auto 15px auto;
-}
 
-.main-thumbnail {
-    position: absolute;
-    top: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 3;
-}
-
-.left-thumbnail, .right-thumbnail {
-    position: absolute;
-    top: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 2;
-    opacity: 0;
-}
-
-/* Keyframe animations for sliding effect */
-@keyframes slideLeft {
-    0% {
-        transform: translateX(-50%);
-        opacity: 1;
-    }
-    20% {
-        transform: translateX(-60%);
-        opacity: 0.8;
-    }
-    100% {
-        transform: translateX(calc(-50vw - 150px));
-        opacity: 0;
-    }
-}
-
-@keyframes slideRight {
-    0% {
-        transform: translateX(-50%);
-        opacity: 1;
-    }
-    20% {
-        transform: translateX(-40%);
-        opacity: 0.8;
-    }
-    100% {
-        transform: translateX(calc(50vw + 150px));
-        opacity: 0;
-    }
-}
-
-.slide-left {
-    animation: slideLeft 1.5s cubic-bezier(0.2, 0.3, 0.25, 0.95) forwards;
-}
-
-.slide-right {
-    animation: slideRight 1.5s cubic-bezier(0.2, 0.3, 0.25, 0.95) forwards;
-}
 
 audio {
     display: block;
@@ -301,11 +309,11 @@ audio {
 }
 
 #lyrics {
-    margin: 25px auto 0 auto;
+    margin: 15px auto 0 auto;
     max-width: 600px;
-    min-height: 100px;
-    padding: 20px 15px;
-    font-size: 24px;
+    min-height: 80px;
+    padding: 15px 12px;
+    font-size: 22px;
     font-family: 'Poppins', sans-serif;
     font-weight: 600;
     text-align: center;
@@ -319,7 +327,7 @@ audio {
 
 #audio-bar-wrapper {
     width: 60%;
-    margin: 25px auto 0 auto;
+    margin: 15px auto 0 auto;
     display: flex;
     align-items: center;
     gap: 12px;
@@ -385,38 +393,98 @@ audio {
     justify-content: center;
     align-items: center;
     gap: 0;
-    margin-top: 25px;
+    margin-top: 15px;
 }
 
 #audio-controls button {
     background: #3498db;
     color: #fff;
-    border: none;
+    border: 2px solid transparent;
     border-radius: 50%;
-    width: 65px;
-    height: 65px;
+    width: 61px;
+    height: 61px;
     font-size: 1.6em;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: background 0.3s ease, box-shadow 0.3s ease;
     display: flex;
     align-items: center;
     justify-content: center;
     box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+    position: relative;
+    transform: none;
+    transition: background 0.3s ease, box-shadow 0.3s ease, transform 0s;
+    outline: none;
+    outline-offset: 0;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    -moz-appearance: none;
+    -webkit-appearance: none;
+    appearance: none;
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    vertical-align: baseline;
 }
 
 #audio-controls button:hover {
     background: #2980b9;
-    transform: scale(1.05);
     box-shadow: 0 6px 15px rgba(0,0,0,0.2);
 }
 
+#audio-controls button:active {
+    background: #1f5f8b;
+    transform: none;
+    border: 2px solid transparent;
+    width: 61px;
+    height: 61px;
+    margin: 0;
+    padding: 0;
+}
+
+#audio-controls button:focus {
+    outline: none;
+    outline-offset: 0;
+    transform: none;
+    border: 2px solid transparent;
+    width: 61px;
+    height: 61px;
+    margin: 0;
+    padding: 0;
+}
+
+#audio-controls button:focus-visible {
+    outline: none;
+    outline-offset: 0;
+}
+
+/* Firefox specific: Remove inner border on button click */
+#audio-controls button::-moz-focus-inner {
+    border: 0;
+    padding: 0;
+    margin: 0;
+}
+
 #pause-resume-btn {
-    width: 60px;
-    height: 60px;
+    width: 56px;
+    height: 56px;
     font-size: 1.5em;
     background: #3498db;
-    border: none;
+    border: 2px solid transparent;
     box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+    position: relative;
+    transform: none;
+    transition: background 0.3s ease, box-shadow 0.3s ease, transform 0s;
+    outline: none;
+    outline-offset: 0;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    -moz-appearance: none;
+    -webkit-appearance: none;
+    appearance: none;
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    vertical-align: baseline;
 }
 
 #pause-resume-btn:hover {
@@ -424,11 +492,44 @@ audio {
     box-shadow: 0 6px 15px rgba(0,0,0,0.2);
 }
 
+#pause-resume-btn:active {
+    background: #1f5f8b;
+    transform: none;
+    border: 2px solid transparent;
+    width: 56px;
+    height: 56px;
+    margin: 0;
+    padding: 0;
+}
+
+#pause-resume-btn:focus {
+    outline: none;
+    outline-offset: 0;
+    transform: none;
+    border: 2px solid transparent;
+    width: 56px;
+    height: 56px;
+    margin: 0;
+    padding: 0;
+}
+
+#pause-resume-btn:focus-visible {
+    outline: none;
+    outline-offset: 0;
+}
+
+/* Firefox specific: Remove inner border on button click */
+#pause-resume-btn::-moz-focus-inner {
+    border: 0;
+    padding: 0;
+    margin: 0;
+}
+
 #typing-box {
-    margin: 25px auto 0 auto;
+    margin: 15px auto 0 auto;
     max-width: 600px;
-    min-height: 50px;
-    padding: 15px 20px;
+    min-height: 40px;
+    padding: 12px 15px;
     text-align: center;
     position: relative;
     background: rgba(255, 255, 255, 0.1);
@@ -550,17 +651,30 @@ audio {
 }
 
 .dialog-btn {
-    padding: 8px 16px;
-    border: none;
+    padding: 6px 14px;
+    border: 2px solid transparent;
     border-radius: 6px;
     font-size: 0.9rem;
     font-family: 'Poppins', sans-serif;
     font-weight: 500;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: background 0.3s ease;
     flex: 1;
     max-width: 120px;
     white-space: nowrap;
+    position: relative;
+    transform: none;
+    transition: background 0.3s ease, transform 0s;
+    outline: none;
+    outline-offset: 0;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    -moz-appearance: none;
+    -webkit-appearance: none;
+    appearance: none;
+    box-sizing: border-box;
+    margin: 0;
+    vertical-align: baseline;
 }
 
 .dialog-btn.primary {
@@ -570,7 +684,29 @@ audio {
 
 .dialog-btn.primary:hover {
     background: #2980b9;
-    transform: translateY(-2px);
+}
+
+.dialog-btn.primary:active {
+    background: #1f5f8b;
+    transform: none;
+    border: 2px solid transparent;
+    padding: 6px 14px;
+    margin: 0;
+    transition: background 0.3s ease, transform 0s;
+}
+
+.dialog-btn.primary:focus {
+    outline: none;
+    outline-offset: 0;
+    transform: none;
+    border: 2px solid transparent;
+    padding: 6px 14px;
+    margin: 0;
+}
+
+.dialog-btn.primary:focus-visible {
+    outline: none;
+    outline-offset: 0;
 }
 
 .dialog-btn.secondary {
@@ -580,5 +716,34 @@ audio {
 
 .dialog-btn.secondary:hover {
     background: #7f8c8d;
-    transform: translateY(-2px);
+}
+
+.dialog-btn.secondary:active {
+    background: #6c7b7d;
+    transform: none;
+    border: 2px solid transparent;
+    padding: 6px 14px;
+    margin: 0;
+    transition: background 0.3s ease, transform 0s;
+}
+
+.dialog-btn.secondary:focus {
+    outline: none;
+    outline-offset: 0;
+    transform: none;
+    border: 2px solid transparent;
+    padding: 6px 14px;
+    margin: 0;
+}
+
+.dialog-btn.secondary:focus-visible {
+    outline: none;
+    outline-offset: 0;
+}
+
+/* Firefox specific: Remove inner border on button click */
+.dialog-btn::-moz-focus-inner {
+    border: 0;
+    padding: 0;
+    margin: 0;
 }

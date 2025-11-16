@@ -33,6 +33,16 @@
             <input type="text" name="url" placeholder="https://www.youtube.com/watch?v=..." required>
             <button type="submit">Check for Lyrics</button>
         </form>
+        {% elif subtitles == "invalid" %}
+        <form>
+            <h3 class="form-title">Invalid Link</h3>
+            <p class="form-subtitle">Please check the URL and try again</p>
+            <div class="message error">The provided YouTube link is invalid or cannot be processed</div>
+        </form>
+        <!-- Try another song button -->
+        <form action="/" method="get">
+            <button type="submit" class="try-another-btn">Try Another Song</button>
+        </form>
         {% elif subtitles|length == 0 %}
         <form>
             <h3 class="form-title">No Lyrics Found</h3>
@@ -59,13 +69,8 @@
         {% endif %}
         {% endif %}
 
-        {% if song and title and thumbnail %}
+        {% if song and title %}
         <div class="song-info">
-            <div class="thumbnail-container">
-                <img src="{{ thumbnail }}" alt="{{ title }}" class="song-thumbnail main-thumbnail">
-                <img src="{{ thumbnail }}" alt="{{ title }}" class="song-thumbnail left-thumbnail">
-                <img src="{{ thumbnail }}" alt="{{ title }}" class="song-thumbnail right-thumbnail">
-            </div>
             <div class="song-title">{{ title }}</div>
         </div>
         {% endif %}
@@ -140,9 +145,7 @@
         </div>
     </div>
 
-    <div class="footer">
-        <p>Lyrics Player &copy; 2025 | Synced Lyrics with Typing Practice</p>
-    </div>
+
 
     <script src="/static/script.js"></script>
 </body>

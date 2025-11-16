@@ -258,41 +258,7 @@ function updatePauseResumeButton() {
 // Initialize button state to paused
 updatePauseResumeButton();
 
-// Thumbnail animation functionality
-let animationInterval;
 
-function startThumbnailAnimation() {
-    const leftThumb = document.querySelector('.left-thumbnail');
-    const rightThumb = document.querySelector('.right-thumbnail');
-    
-    // Reset classes
-    leftThumb.classList.remove('slide-left');
-    rightThumb.classList.remove('slide-right');
-    
-    // Trigger reflow
-    void leftThumb.offsetWidth;
-    void rightThumb.offsetWidth;
-    
-    // Add animation classes
-    leftThumb.classList.add('slide-left');
-    rightThumb.classList.add('slide-right');
-}
-
-// Start animation loop
-function initThumbnailAnimation() {
-    // Start first animation after 2 seconds
-    setTimeout(() => {
-        startThumbnailAnimation();
-        
-        // Set up continuous loop every 3 seconds
-        animationInterval = setInterval(startThumbnailAnimation, 3000);
-    }, 2000);
-}
-
-// Initialize thumbnail animation when page loads
-if (document.querySelector('.thumbnail-container')) {
-    initThumbnailAnimation();
-}
 
 pauseResumeBtn.onclick = () => {
     if (audio.paused) {

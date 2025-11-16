@@ -101,23 +101,37 @@ async def get_subtitles(request: Request, url: str = Form(...)):
     ydl_opts = {"quiet": True, "skip_download": True}
     subs_list = []
 
-    with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-        info = ydl.extract_info(url, download=False)
-        title = info.get("title")
-        thumbnail = info.get("thumbnail")
-        subs_dict = info.get("subtitles") or info.get("automatic_captions") or {}
-        subs_list = list(subs_dict.keys())
+    try:
+        with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+            info = ydl.extract_info(url, download=False)
+            title = info.get("title")
+            thumbnail = info.get("thumbnail")
+            subs_dict = info.get("subtitles") or info.get("automatic_captions") or {}
+            subs_list = list(subs_dict.keys())
 
-    return templates.TemplateResponse(
-        "index.html",
-        {
-            "request": request,
-            "subtitles": subs_list,
-            "url": url,
-            "song": None,
-            "subs": []
-        }
-    )
+        return templates.TemplateResponse(
+            "index.html",
+            {
+                "request": request,
+                "subtitles": subs_list,
+                "url": url,
+                "song": None,
+                "subs": []
+            }
+        )
+    except Exception as e:
+        print(f"Error processing URL: {e}")
+        # Return error state - using "invalid" as a special marker
+        return templates.TemplateResponse(
+            "index.html",
+            {
+                "request": request,
+                "subtitles": "invalid",
+                "url": url,
+                "song": None,
+                "subs": []
+            }
+        )
 
 
 # Step 2: Download audio & subtitles
